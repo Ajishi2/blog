@@ -21,3 +21,53 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+# Laravel-specific files
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/database/*.sqlite
+
+# Ignore environment files (important for security)
+.env
+.env.local
+.env.development
+.env.production
+.env.example
+
+# Ignore IDE/editor-specific files
+*.log
+*.swp
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore Composer dependencies
+/vendor
+/composer.lock
+
+# Ignore npm dependencies
+/node_modules
+/npm-debug.log
+/yarn.lock
+/pnpm-lock.yaml
+
+# Ignore Laravel cache, logs, and debugging data
+/storage/logs/*.log
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+
+# Ignore PHPUnit and test artifacts
+phpunit.xml
+phpunit.xml.dist
+coverage.xml
+.phpunit.result.cache
+
+# Ignore build artifacts
+/build/
