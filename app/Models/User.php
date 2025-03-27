@@ -2,42 +2,30 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasMany; // Added this import
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'bio',
+        'avatar',
+        'username'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -46,7 +34,49 @@ class User extends Authenticatable
         ];
     }
 
-    public function userPosts(){
-        return $this->hasMany(Post::class, 'user_id');
+    // Relationships
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function publishedPosts(): HasMany
+    {
+        return $this->hasMany(Post::class)
+                    ->where('status', 'published')
+                    ->latest('published_at');
+    }
+
+    // Accessors
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar 
+            ? asset('storage/'.$this->avatar) 
+            : asset('images/default-avatar.png');
+    }
+
+    // Mutators
+    public function setNameAttribute($value): void
+    {
+        $this->attributes['name'] = $value;
+        
+        if (!isset($this->attributes['username'])) {
+            $username = Str::slug($value);
+            $originalUsername = $username;
+            $count = 1;
+
+            while (self::where('username', $username)->exists()) {
+                $username = $originalUsername . $count;
+                $count++;
+            }
+
+            $this->attributes['username'] = $username;
+        }
+    }
+
+    // Methods
+    public function isProfileComplete(): bool
+    {
+        return !empty($this->bio) && !empty($this->avatar);
     }
 }

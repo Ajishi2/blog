@@ -1,157 +1,133 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Post | Oceanic</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/@material-tailwind/html@latest/styles/material-tailwind.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        oceanic: {
-                            deep: '#5D768B',
-                            sand: '#C8B39B',
-                            driftwood: '#E3C9A4',
-                            shell: '#F2D9C7',
-                            breeze: '#F8EFE5',
-                            slate: '#3A4A5A'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            background-color: #F8EFE5;
-            font-family: 'Inter', sans-serif;
-        }
-        .editor-card {
-            background: white;
-            box-shadow: 0 25px 50px -12px rgba(93, 118, 139, 0.08);
-            border-radius: 12px;
-            border: 1px solid rgba(93, 118, 139, 0.1);
-        }
-        .nav-pill {
-            position: relative;
-        }
-        .nav-pill::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #5D768B;
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        .nav-pill:hover::after {
-            transform: scaleX(1);
-        }
-        .btn-primary {
-            background-color: #5D768B;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .btn-primary:hover {
-            background-color: #3A4A5A;
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(93, 118, 139, 0.2);
-        }
-        .input-field {
-            transition: all 0.3s ease;
-            border: 1px solid rgba(93, 118, 139, 0.2);
-        }
-        .input-field:focus {
-            border-color: #5D768B;
-            box-shadow: 0 0 0 3px rgba(93, 118, 139, 0.1);
-        }
-    </style>
-</head>
-<body class="min-h-screen bg-oceanic-breeze">
-    <!-- Minimal Header -->
-    <header class="bg-white border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex justify-between h-20 items-center">
-                <a href="/" class="text-2xl font-semibold text-oceanic-slate tracking-tight">Oceanic</a>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="#" class="text-oceanic-deep/90 hover:text-oceanic-deep nav-pill font-medium">Dashboard</a>
-                    <a href="#" class="text-oceanic-deep/90 hover:text-oceanic-deep nav-pill font-medium">Profile</a>
-                    <a href="#" class="text-oceanic-deep/90 hover:text-oceanic-deep nav-pill font-medium">Settings</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+@extends('layouts.app')
 
-    <!-- Editor Content -->
-    <main class="max-w-4xl mx-auto px-6 py-12">
-        <div class="editor-card overflow-hidden">
-            <!-- Editor Header -->
-            <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
+@section('title', isset($mode) ? ($mode === 'create' ? 'Create Post' : 'Edit Post') : 'View Post')
+
+@section('content')
+    @if(session('success'))
+        <div class="mb-3 alert alert-success rounded-3">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div>
+        <div class="card @if(isset($readOnly) && $readOnly) read-only @endif rounded-4">
+            <div class="card-header d-flex align-items-center justify-content-between py-3 px-4 border-bottom" style="border-color: var(--linen)!important">
                 <div>
-                    <a href="/" class="inline-flex items-center text-oceanic-deep/80 hover:text-oceanic-deep transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    <a href="{{ route('posts.user') }}" class="d-inline-flex align-items-center text-taupe text-decoration-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="me-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
-                        Back to posts
+                        Back to my posts
                     </a>
                 </div>
-                <h1 class="text-xl font-semibold text-oceanic-slate">Edit Post</h1>
-                <div class="w-24"></div> <!-- Spacer for balance -->
+                <div class="text-center">
+                    <h1 class="font-serif fs-4 fw-semibold text-charcoal mb-0">
+                        @if(isset($mode))
+                            @if($mode === 'create')
+                                Create New Post
+                            @else
+                                Editing Post
+                            @endif
+                        @else
+                            Viewing Post
+                        @endif
+                    </h1>
+                    @if(!isset($mode) || $mode !== 'create')
+                        <p class="small text-taupe mt-1 mb-0">
+                            @if(isset($post->published_at) && $post->published_at)
+                                Published 
+                                @if(is_string($post->published_at))
+                                    {{ \Carbon\Carbon::parse($post->published_at)->format('M d, Y') }}
+                                @else
+                                    {{ $post->published_at->format('M d, Y') }}
+                                @endif
+                            @else
+                                Created {{ $post->created_at->diffForHumans() }}
+                            @endif
+                        </p>
+                    @endif
+                </div>
+                <div style="width: 6rem;">
+                    @if(isset($readOnly) && $readOnly && auth()->id() === $post->user_id)
+                        <a href="{{ route('posts.edit', $post) }}" 
+                           class="btn-oceanic-primary">
+                            Edit
+                        </a>
+                    @endif
+                </div>
             </div>
             
-            <!-- Editor Form -->
-            <div class="p-8">
-                <form action="/edit-post/{{ $post->id }}" method="POST" class="space-y-8">
-                    @csrf
+            <div class="card-body p-4">
+                @if(isset($readOnly) && $readOnly)
+                    <!-- Read-only view -->
+                    <article>
+                        <h2 class="font-serif fs-1 fw-bold text-charcoal mb-4">{{ $post->title }}</h2>
+                        <div class="text-taupe" style="white-space: pre-line;">
+                            {{ $post->body }}
+                        </div>
+                    </article>
+                @else
+                    <!-- Editable form -->
+                    @if(isset($mode) && $mode === 'create')
+                    <form action="{{ route('posts.store') }}" method="POST">
+                    @else
+                    <form action="{{ route('posts.update', $post) }}" method="POST">
                     @method('PUT')
+                    @endif
+                    @csrf
                     
-                    <div class="space-y-2">
-                        <label for="title" class="block text-sm font-medium text-oceanic-slate">Title</label>
-                        <input type="text" id="title" name="title" value="{{ $post->title }}" required
-                            class="input-field w-full px-5 py-3 rounded-lg bg-white focus:outline-none focus:ring-0">
+                    <div class="mb-4">
+                        <label for="title" class="form-label small fw-medium text-charcoal">Title</label>
+                        <input type="text" id="title" name="title" 
+                               value="{{ isset($post) ? old('title', $post->title) : old('title') }}" 
+                               required class="form-control">
+                        @error('title')
+                            <div class="form-text text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                     
-                    <div class="space-y-2">
-                        <label for="body" class="block text-sm font-medium text-oceanic-slate">Content</label>
+                    <div class="mb-4">
+                        <label for="body" class="form-label small fw-medium text-charcoal">Content</label>
                         <textarea id="body" name="body" rows="10" required
-                            class="input-field w-full px-5 py-3 rounded-lg bg-white focus:outline-none focus:ring-0">{{ $post->body }}</textarea>
+                            class="form-control">@if(isset($post)){{ old('body', $post->body) }}@else{{ old('body') }}@endif</textarea>
+                        @error('body')
+                            <div class="form-text text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="status" class="form-label small fw-medium text-charcoal">Status</label>
+                            <select id="status" name="status" class="form-select">
+                                <option value="draft" {{ (isset($post) && old('status', $post->status) === 'draft') || old('status') === 'draft' ? 'selected' : '' }}>Draft</option>
+                                <option value="published" {{ (isset($post) && old('status', $post->status) === 'published') || old('status') === 'published' ? 'selected' : '' }}>Published</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="published_at" class="form-label small fw-medium text-charcoal">Publish Date</label>
+                            <input type="datetime-local" id="published_at" name="published_at" 
+                                value="{{ isset($post) ? old('published_at', $post->published_at ? $post->published_at->format('Y-m-d\TH:i') : '') : old('published_at') }}"
+                                class="form-control">
+                        </div>
                     </div>
                     
-                    <div class="flex items-center justify-end space-x-4 pt-4">
-                        <a href="/" class="px-6 py-2.5 rounded-lg text-oceanic-deep/80 hover:text-oceanic-deep font-medium transition-colors">
-                            Discard
+                    <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top" style="border-color: var(--linen)!important">
+                        <a href="{{ route('posts.user') }}" class="btn btn-link text-taupe text-decoration-none">
+                            Cancel
                         </a>
-                        <button type="submit" class="btn-primary px-7 py-2.5 rounded-lg text-white font-medium">
-                            Update Post
+                        <button type="submit" class="btn-oceanic-primary">
+                            @if(isset($mode) && $mode === 'create')
+                                Create Post
+                            @else
+                                Update Post
+                            @endif
                         </button>
                     </div>
-                </form>
+                    </form>
+                @endif
             </div>
         </div>
-    </main>
-    
-    <!-- Minimal Footer -->
-    <footer class="bg-white border-t border-gray-100 mt-16">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="py-8 flex flex-col md:flex-row justify-between items-center">
-                <div class="text-sm text-oceanic-deep/70 mb-4 md:mb-0">
-                    &copy; 2024 Oceanic. All rights reserved.
-                </div>
-                <div class="flex space-x-6">
-                    <a href="#" class="text-oceanic-deep/70 hover:text-oceanic-deep transition-colors">Terms</a>
-                    <a href="#" class="text-oceanic-deep/70 hover:text-oceanic-deep transition-colors">Privacy</a>
-                    <a href="#" class="text-oceanic-deep/70 hover:text-oceanic-deep transition-colors">Contact</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
+    </div>
+@endsection
+

@@ -10,3 +10,35 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+/* Bootstrap overrides for Oceanic theme */
+.btn-primary {
+    background-color: #5D768B;
+    border-color: #5D768B;
+}
+
+.btn-primary:hover {
+    background-color: #3A4A5A;
+    border-color: #3A4A5A;
+}
+
+.dropdown-menu {
+    border: 1px solid rgba(93, 118, 139, 0.1);
+    min-width: 240px;
+}
+
+.dropdown-item:hover {
+    background-color: #F8EFE5;
+    color: #5D768B;
+}
+
+.text-oceanic-deep {
+    color: #5D768B;
+}
+
+.text-oceanic-slate {
+    color: #3A4A5A;
+}
+
+.border-oceanic-deep {
+    border-color: #5D768B !important;
+}

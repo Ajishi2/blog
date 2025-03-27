@@ -1,24 +1,38 @@
 <?php
 
-use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
-use App\Models\Post;
+use App\Http\Controllers\PostController;
 
-Route::get('/', function () {
-    $posts = [];
-    if(auth()->check()){
-        $posts = auth()->user()->userPosts()->latest()->get();  
-    }
-   
-    return view('home', ['posts' => $posts]);
-});
-Route::post('/register', [UserController::class,'register']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Authentication routes
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login')->middleware('guest');
+
+Route::post('/login', [UserController::class, 'login']);
+Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('register')->middleware('guest');
+Route::post('/register', [UserController::class, 'register']);
+
+// Post routes - fixed ordering and definitions
+Route::prefix('posts')->middleware('auth')->group(function () {
+    // User posts listing - should come first
+    Route::get('/user', [PostController::class, 'userPosts'])->name('posts.user');
     
+    // Create routes
+    Route::get('/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('/store', [PostController::class, 'store'])->name('posts.store');
+    
+    // View/Edit routes - keep these last
+    Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::get('/user', [PostController::class, 'userPosts'])->name('posts.user');
+    Route::put('/{post}/update', [PostController::class, 'update'])->name('posts.update');
+    Route::get('/{post}', [PostController::class, 'show'])->name('posts.show');
+    Route::delete('/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
-Route::post('/logout', [UserController::class,'logout']);
-Route::post('/login', [UserController::class,'login']);
-Route::post('/create-post', [PostController::class, 'createPost']);
-Route::get('/edit-post/{post}',[PostController::class,'showEditScreen']);
-Route::put('/edit-post/{post}',[PostController::class,'actuallyUpdatePost']);
-Route::delete('/delete-post/{post}',[PostController::class,'deletePost']);
+});
