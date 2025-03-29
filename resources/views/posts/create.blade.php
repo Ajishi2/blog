@@ -1,171 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Same head content as edit-post.blade.php -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Post | Oceanic</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Include the same styles as edit-post.blade.php -->
-</head>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Post | Oceanic</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        oceanic: {
-                            deep: '#5D768B',
-                            sand: '#C8B39B',
-                            driftwood: '#E3C9A4',
-                            shell: '#F2D9C7',
-                            breeze: '#F8EFE5',
-                            slate: '#3A4A5A'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-color: #F8EFE5;
-            font-family: 'Inter', sans-serif;
-        }
-        .editor-card {
-            background: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(93, 118, 139, 0.05);
-        }
-        .input-field {
-            transition: all 0.3s ease;
-            border: 1px solid rgba(93, 118, 139, 0.2);
-        }
-        .input-field:focus {
-            border-color: #5D768B;
-            box-shadow: 0 0 0 3px rgba(93, 118, 139, 0.1);
-        }
-        .btn-primary {
-            background-color: #5D768B;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .btn-primary:hover {
-            background-color: #3A4A5A;
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(93, 118, 139, 0.2);
-        }
-        .nav-pill {
-            position: relative;
-        }
-        .nav-pill::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #5D768B;
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        .nav-pill:hover::after {
-            transform: scaleX(1);
-        }
-    </style>
-</head>
-    </header>
+@extends('layouts.app')
 
-    <!-- Create Post Content -->
-    <main class="max-w-4xl mx-auto px-6 py-12">
-        @if(session('success'))
-            <div class="mb-6 p-4 bg-green-100 text-green-700 rounded-lg">
-                {{ session('success') }}
-            </div>
-        @endif
+@section('title', 'Create New Post')
 
-        @if(session('error'))
-            <div class="mb-6 p-4 bg-red-100 text-red-700 rounded-lg">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        <div class="editor-card overflow-hidden">
-            <!-- Editor Header -->
-            <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
-                <div>
-                    <a href="{{ route('posts.user') }}" class="inline-flex items-center text-oceanic-deep/80 hover:text-oceanic-deep transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                        </svg>
-                        Back to my posts
-                    </a>
-                </div>
-                <div class="text-center">
-                    <h1 class="text-xl font-semibold text-oceanic-slate">Create New Post</h1>
-                </div>
-                <div class="w-24"></div>
-            </div>
-            
-            <!-- Create Form -->
-            <div class="p-8">
-                <form action="{{ route('posts.store') }}" method="POST" class="space-y-8">
-                    @csrf
-                    
-                    <div class="space-y-2">
-                        <label for="title" class="block text-sm font-medium text-oceanic-slate">Title</label>
-                        <input type="text" id="title" name="title" value="{{ old('title') }}" required
-                            class="input-field w-full px-5 py-3 rounded-lg bg-white focus:outline-none focus:ring-0">
-                        @error('title')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="body" class="block text-sm font-medium text-oceanic-slate">Content</label>
-                        <textarea id="body" name="body" rows="10" required
-                            class="input-field w-full px-5 py-3 rounded-lg bg-white focus:outline-none focus:ring-0">{{ old('body') }}</textarea>
-                        @error('body')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label for="status" class="block text-sm font-medium text-oceanic-slate">Status</label>
-                            <select id="status" name="status" class="input-field w-full px-5 py-3 rounded-lg bg-white focus:outline-none focus:ring-0">
-                                <option value="draft" {{ old('status', 'draft') === 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="published" {{ old('status') === 'published' ? 'selected' : '' }}>Published</option>
-                            </select>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label for="published_at" class="block text-sm font-medium text-oceanic-slate">Publish Date</label>
-                            <input type="datetime-local" id="published_at" name="published_at" 
-                                value="{{ old('published_at') }}"
-                                class="input-field w-full px-5 py-3 rounded-lg bg-white focus:outline-none focus:ring-0">
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-end space-x-4 pt-4">
-                        <a href="{{ route('posts.user') }}" class="px-6 py-2.5 rounded-lg text-oceanic-deep/80 hover:text-oceanic-deep font-medium transition-colors">
-                            Cancel
+@section('content')
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ route('posts.user') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back
                         </a>
-                        <button type="submit" class="btn-primary px-7 py-2.5 rounded-lg text-white font-medium">
-                            Create Post
-                        </button>
+                        <h5 class="mb-0">Create New Post</h5>
+                        <div style="width: 80px;"></div>
                     </div>
-                </form>
+                </div>
+
+                <div class="card-body">
+                    <form id="post-form" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <!-- Title Field -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   value="{{ old('title') }}" required>
+                            @error('title')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Cover Image Field -->
+                        <div class="mb-4">
+                            <label for="cover_image" class="form-label">Cover Image</label>
+                            <input type="file" class="form-control" id="cover_image" name="cover_image"
+                                   accept="image/*">
+                            @error('cover_image')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                            <div id="image-preview" class="mt-2"></div>
+                        </div>
+
+                        <!-- Status Field -->
+                        <div class="mb-4">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-control" id="status" name="status" required>
+                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
+                            </select>
+                            @error('status')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Publish Date Field -->
+                        <div class="mb-4" id="publish-date-container" style="display: none;">
+                            <label for="published_at" class="form-label">Publish Date</label>
+                            <input type="datetime-local" class="form-control" id="published_at" name="published_at"
+                                   value="{{ old('published_at') }}">
+                            @error('published_at')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Content Field -->
+                        <div class="mb-4">
+                            <label for="body" class="form-label">Content</label>
+                            <textarea class="form-control" id="body" name="body" rows="10">{{ old('body', '') }}</textarea>
+                            @error('body')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-end gap-3 border-top pt-4">
+                            <a href="{{ route('posts.user') }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="submit-btn">
+                                Create Post
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </main>
-</body>
-</html>
+    </div>
+</div>
+
+@push('scripts')
+<!-- Image Preview Script -->
+<script>
+document.getElementById('cover_image').addEventListener('change', function(e) {
+    const preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+    
+    if (this.files && this.files[0]) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(this.files[0]);
+        img.classList.add('img-thumbnail');
+        img.style.maxHeight = '200px';
+        preview.appendChild(img);
+    }
+});
+</script>
+
+<!-- Status Change Handler -->
+<script>
+document.getElementById('status').addEventListener('change', function() {
+    const publishDateContainer = document.getElementById('publish-date-container');
+    if (this.value === 'published') {
+        publishDateContainer.style.display = 'block';
+        // Set default publish date to now if empty
+        if (!document.getElementById('published_at').value) {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('published_at').value = localDateTime;
+        }
+    } else {
+        publishDateContainer.style.display = 'none';
+    }
+});
+
+// Initialize status field on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('status').value === 'published') {
+        document.getElementById('publish-date-container').style.display = 'block';
+    }
+});
+</script>
+
+<!-- Local TinyMCE Implementation -->
+<script src="{{ asset('js/tinymce/tinymce/js/tinymce/tinymce.min.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize TinyMCE with local files
+    tinymce.init({
+        selector: '#body',
+        base_url: '{{ asset('js/tinymce/tinymce/js/tinymce') }}',
+        plugins: 'lists link image',
+        toolbar: 'bold italic | bullist numlist | link image',
+        height: 500,
+        menubar: false,
+        branding: true, // Shows "Powered by Tiny" instead of error
+        skin_url: '{{ asset('js/tinymce/tinymce/js/tinymce/skins/ui/oxide') }}',
+        content_css: '{{ asset('js/tinymce/tinymce/js/tinymce/skins/content/default/content.css') }}',
+        setup: function(editor) {
+            editor.on('init', function() {
+                console.log('Local TinyMCE initialized');
+                editor.focus();
+            });
+            editor.on('change', function() {
+                editor.save();
+            });
+        }
+    });
+
+    // Form submission handler
+    document.getElementById('post-form').addEventListener('submit', function(e) {
+        // Save TinyMCE content
+        if (typeof tinymce !== 'undefined') {
+            tinymce.triggerSave();
+        }
+        
+        // Show loading state
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Creating...
+        `;
+        
+        // Form will submit normally after this
+    });
+});
+</script>
+
+<!-- Debugging output -->
+<script>
+console.log('TinyMCE resources loaded from:', {
+    core: '{{ asset('js/tinymce/tinymce/js/tinymce/tinymce.min.js') }}',
+    skin: '{{ asset('js/tinymce/tinymce/js/tinymce/skins/ui/oxide') }}',
+    content_css: '{{ asset('js/tinymce/tinymce/js/tinymce/skins/content/default/content.css') }}'
+});
+</script>
+@endpush
+@endsection

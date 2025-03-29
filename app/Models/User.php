@@ -12,14 +12,15 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'bio',
-        'avatar',
-        'username'
-    ];
+    // app/Models/Post.php
+protected $fillable = [
+    'title',
+    'body',
+    'cover_image', // Add this
+    'status',
+    'published_at',
+    'user_id'
+];
 
     protected $hidden = [
         'password',

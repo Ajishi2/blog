@@ -9,22 +9,23 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
-{public function login(Request $request)
+{
+    public function login(Request $request)
     {
         $credentials = $request->validate([
-            'username' => 'required', // Changed from email to username
+            'username' => 'required',
             'password' => 'required'
         ]);
-    
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('/posts/user')
                            ->with('success', 'Logged in successfully');
         }
-    
-        return back()->withErrors([
-            'username' => 'Invalid credentials', // Changed from email to username
-        ])->onlyInput('username');
+
+        return redirect()->route('home')
+                       ->withErrors(['username' => 'Invalid credentials'])
+                       ->withInput($request->only('username'));
     }
 
     public function logout(Request $request)
@@ -43,17 +44,18 @@ class UserController extends Controller
             'password' => ['required', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048']
         ]);
-    
+
         $avatarPath = $request->file('avatar')->store('avatars', 'public');
-    
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'avatar' => $avatarPath
         ]);
-    
+
         Auth::login($user);
         return redirect()->route('posts.user')
                        ->with('success', 'Account created successfully!');
-    }}
+    }
+}

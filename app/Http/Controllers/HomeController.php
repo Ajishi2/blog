@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
-    {
-        $posts = auth()->check() 
-            ? Post::published()->latest()->paginate(10)
-            : collect(); // Empty collection for guests
-
-        return view('home', ['posts' => $posts]);
+{
+    // For authenticated users - show their posts
+    if (auth()->check()) {
+        $posts = auth()->user()->posts()->latest()->paginate(10);
+        return view('home', compact('posts'));
     }
+
+    // For guests - show empty collection or public posts
+    return view('home', ['posts' => collect()]);
+}
 }

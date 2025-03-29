@@ -35,27 +35,42 @@ public function create()
 }
 
 
+// In your PostController
 public function store(Request $request)
 {
     $validated = $request->validate([
         'title' => 'required|max:255',
         'body' => 'required',
-        'status' => 'in:draft,published',
-        'published_at' => 'nullable|date'
+        'status' => 'required|in:draft,published',
+        'published_at' => 'nullable|date',
+        'cover_image' => 'nullable|image|max:2048'
     ]);
 
-    $post = Post::create([
-        'title' => strip_tags($validated['title']),
-        'body' => strip_tags($validated['body']),
-        'status' => $validated['status'] ?? 'draft',
-        'published_at' => $validated['status'] === 'published' 
-            ? ($validated['published_at'] ?? now())
-            : null,
-        'user_id' => Auth::id()
-    ]);
+    try {
+        // Handle file upload
+        if ($request->hasFile('cover_image')) {
+            $validated['cover_image'] = $request->file('cover_image')->store('post-covers', 'public');
+        }
 
-    return redirect()->route('posts.user')
-                   ->with('success', 'Post created successfully');
+        $post = Post::create([
+            'title' => $validated['title'],
+            'body' => $validated['body'],
+            'status' => $validated['status'],
+            'published_at' => $validated['status'] === 'published' 
+                ? ($validated['published_at'] ?? now())
+                : null,
+            'user_id' => auth()->id(),
+            'cover_image' => $validated['cover_image'] ?? null
+        ]);
+
+        return redirect()->route('posts.show', $post)
+             ->with('success', 'Post created successfully!');
+
+    } catch (\Exception $e) {
+        return back()
+            ->withInput()
+            ->with('error', 'Error creating post: ' . $e->getMessage());
+    }
 }
     public function update(Request $request, Post $post)
     {

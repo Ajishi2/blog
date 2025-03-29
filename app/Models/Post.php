@@ -11,13 +11,12 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 
-        'body', 
-        'user_id', 
-        'slug', 
-        'excerpt', 
-        'published_at', 
-        'status'
+        'title',
+        'body',
+        'status',
+        'published_at',
+        'cover_image',  // Make sure this is included
+        'user_id'
     ];
 
     protected $dates = ['published_at'];
