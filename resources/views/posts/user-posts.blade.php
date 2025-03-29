@@ -66,7 +66,7 @@
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h3 class="fs-5 fw-semibold mb-0">
-                                    <a href="{{ route('posts.show', $post) }}" class="text-decoration-none text-dark">
+                                    <a href="#" class="text-decoration-none text-dark post-title-btn" data-bs-toggle="modal" data-bs-target="#postModal-{{ $post->id }}">
                                         {{ $post->title }}
                                     </a>
                                 </h3>
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                             
-                            <p class="text-muted mb-3">{{ Str::limit($post->body, 150) }}</p>
+                            <p class="text-muted mb-3">{{ Str::limit(strip_tags($post->body), 150) }}</p>
                             
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top border-light">
                                 <div class="small text-muted d-flex align-items-center">
@@ -108,6 +108,42 @@
                                             Delete
                                         </button>
                                     </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Post Modal -->
+                    <div class="modal fade" id="postModal-{{ $post->id }}" tabindex="-1" aria-labelledby="postModalLabel-{{ $post->id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header border-0 pb-0">
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body pt-0">
+                                    @if(isset($post->cover_image) && $post->cover_image)
+                                        <div class="mb-4">
+                                            <img src="{{ asset('storage/' . $post->cover_image) }}" alt="{{ $post->title }}" class="img-fluid rounded-4 w-100" style="max-height: 400px; object-fit: cover;">
+                                        </div>
+                                    @endif
+                                    <h2 class="font-serif fs-2 fw-bold text-charcoal mb-3">{{ $post->title }}</h2>
+                                    <div class="d-flex gap-2 mb-4">
+                                        @if(isset($post->status))
+                                        <span class="badge {{ $post->status === 'published' ? 'badge-published' : 'badge-draft' }}">
+                                            {{ ucfirst($post->status) }}
+                                        </span>
+                                        @endif
+                                        <span class="badge badge-date">
+                                            {{ $post->created_at->format('M d, Y') }}
+                                        </span>
+                                    </div>
+                                    <div class="post-content">
+                                        {!! $post->body !!}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-primary">Edit Post</a>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -185,10 +221,16 @@
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
     }
-
-    .post-card h3 a:hover {
+    
+    .post-title-btn {
+        font-weight: 600;
+        transition: all 0.2s ease;
+        display: block;
+        width: 100%;
+    }
+    
+    .post-title-btn:hover, .post-title-btn:focus {
         color: var(--bs-primary) !important;
-        text-decoration: underline !important;
     }
     
     .badge-published {
@@ -247,6 +289,22 @@
         border-color: #dc3545;
         color: white;
     }
+    
+    .post-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    .modal-content {
+        border-radius: 1rem;
+        border: none;
+        overflow: hidden;
+    }
+    
+    .modal-header, .modal-footer {
+        border-color: var(--oceanic-gray-200);
+    }
 </style>
 @endpush
-
