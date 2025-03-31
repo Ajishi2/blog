@@ -39,21 +39,23 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'min:3', 'max:20', Rule::unique('users', 'name')],
+            'name' => ['required', 'min:3', 'max:20'],
+            'username' => ['required', 'min:3', 'max:20', Rule::unique('users', 'username')],
             'email' => ['required', 'email', Rule::unique('users', 'email')],
             'password' => ['required', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048']
         ]);
-
+    
         $avatarPath = $request->file('avatar')->store('avatars', 'public');
-
+    
         $user = User::create([
             'name' => $validated['name'],
+            'username' => $validated['username'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'avatar' => $avatarPath
         ]);
-
+    
         Auth::login($user);
         return redirect()->route('posts.user')
                        ->with('success', 'Account created successfully!');

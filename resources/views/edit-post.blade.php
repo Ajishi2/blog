@@ -40,6 +40,26 @@
         background: rgba(255, 255, 255, 1);
         transform: scale(1.1);
     }
+    
+    /* Loading overlay styles */
+    #loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.9);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    
+    .success-message {
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+    }
 </style>
 @endpush
 
@@ -47,9 +67,22 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             @if(session('success'))
-                <div class="alert alert-success mb-4">
+                <div class="alert alert-success mb-4 success-message" id="success-message">
                     {{ session('success') }}
                 </div>
+                
+                <script>
+                    // Auto-hide success message after 5 seconds
+                    setTimeout(function() {
+                        const successMessage = document.getElementById('success-message');
+                        if (successMessage) {
+                            successMessage.style.opacity = '0';
+                            setTimeout(() => {
+                                successMessage.style.display = 'none';
+                            }, 500);
+                        }
+                    }, 5000);
+                </script>
             @endif
 
             <div class="card @if(isset($readOnly) && $readOnly) read-only @endif rounded-4">
@@ -100,6 +133,14 @@
                 </div>
                 
                 <div class="card-body p-4">
+                    <!-- Loading overlay -->
+                    <div id="loading-overlay">
+                        <img src="https://i.gifer.com/origin/b4/b4d657e7ef262b88eb5f7ac021edda87.gif" 
+                             alt="Loading" 
+                             style="width: 150px; height: 150px; object-fit: contain;">
+                        <h5 class="font-serif mt-3">Publishing your post...</h5>
+                    </div>
+                    
                     @if(isset($readOnly) && $readOnly)
                         <!-- Read-only view -->
                         <article>
@@ -116,9 +157,9 @@
                     @else
                         <!-- Editable form -->
                         @if(isset($mode) && $mode === 'create')
-                        <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+                        <form id="post-form" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                         @else
-                        <form action="{{ route('posts.update', $post) }}" method="POST" enctype="multipart/form-data">
+                        <form id="post-form" action="{{ route('posts.update', $post) }}" method="POST" enctype="multipart/form-data">
                         @method('PUT')
                         @endif
                         @csrf
@@ -183,7 +224,7 @@
                             <a href="{{ route('posts.user') }}" class="btn btn-link">
                                 Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="submit-btn">
                                 @if(isset($mode) && $mode === 'create')
                                     Create Post
                                 @else
@@ -203,6 +244,7 @@
 <script src="{{ asset('js/tinymce/tinymce/js/tinymce/tinymce.min.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize TinyMCE
         tinymce.init({
             selector: '.tinymce-editor',
             height: 400,
@@ -245,7 +287,36 @@
                 removeInput.value = '1';
             });
         }
+        
+        // Form submission with loading overlay
+        const form = document.getElementById('post-form');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        if (form && loadingOverlay) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Save TinyMCE content
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.triggerSave();
+                }
+                
+                // Show loading overlay
+                loadingOverlay.style.display = 'flex';
+                
+                // Disable submit button
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Publishing...';
+                }
+                
+                // Wait 1 second before submitting the form
+                setTimeout(function() {
+                    form.submit();
+                }, 1000);
+            });
+        }
     });
 </script>
 @endpush
-

@@ -6,34 +6,30 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Relations\HasMany; // Added this import
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // app/Models/Post.php
-protected $fillable = [
-    'title',
-    'body',
-    'cover_image', // Add this
-    'status',
-    'published_at',
-    'user_id'
-];
+    protected $fillable = [
+        'name',
+        'username',  // Make sure this is included
+        'email',
+        'password',
+        'avatar',
+        'bio'       // If you're using this field
+    ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     // Relationships
     public function posts(): HasMany
