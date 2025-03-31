@@ -3,7 +3,7 @@
 @section('title', 'My Posts | Oceanic')
 
 @section('content')
-<div class="container py-5">
+
     <div class="row">
         <div class="col-lg-10 mx-auto">
             <!-- Page Header -->

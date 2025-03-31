@@ -60,7 +60,17 @@
             --bs-border-radius-2xl: 1.5rem;
             --bs-border-radius-pill: 50rem;
         }
-        
+        .post-card, .form-card {
+    border-radius: 0.75rem !important;
+    border: none !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    margin-bottom: 8rem;
+    background: white;
+}.card-body {
+    padding: 3rem !important;
+}
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--oceanic-gray-50);
@@ -98,7 +108,10 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
         }
-        
+        .navbar {
+    z-index: 1030; /* Bootstrap's default z-index for fixed elements */
+    position: relative; /* or 'fixed' if you want it to stay at top on scroll */
+}
         .btn-secondary {
             background-color: var(--bs-secondary);
             border-color: var(--bs-secondary);
@@ -214,11 +227,16 @@
         
         /* Navbar */
         .navbar {
-            background-color: white;
-            border-bottom: 1px solid var(--oceanic-gray-200);
-            padding: 1rem 0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    background-color: white;
+    border-bottom: 1px solid var(--oceanic-gray-200);
+    padding: 1rem 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
         
         .navbar-brand {
             font-family: 'Playfair Display', serif;
@@ -280,7 +298,15 @@
             margin-bottom: 1.25rem;
             color: var(--oceanic-gray-500);
         }
-        
+        .card {
+    border-radius: 0.75rem !important;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+}
         footer .nav-link {
             padding: 0.25rem 0;
             color: var(--oceanic-gray-600);
@@ -341,7 +367,7 @@
     @stack('styles')
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg sticky-top">
+<nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
             <a href="{{ route('home') }}" class="navbar-brand">Oceanic</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -419,9 +445,9 @@
         </div>
     </nav>
     
-    <main>
-        @yield('content')
-    </main>
+    <main style="padding-top: 80px;">
+    @yield('content')
+</main>
     
     <footer>
         <div class="container">

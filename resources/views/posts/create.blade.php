@@ -3,11 +3,11 @@
 @section('title', 'Create New Post')
 
 @section('content')
-<div class="container py-5">
+<div class="container" style="padding-top: 100px;">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white border-bottom">
+        <div class="col-lg-10"> <!-- Changed from col-lg-8 to match user-posts -->
+            <div class="card mb-4 post-card"> <!-- Added post-card class -->
+                <div class="card-header bg-white border-bottom-0 py-3 px-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{{ route('posts.user') }}" class="btn btn-sm btn-outline-secondary">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="me-1">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body p-4"> <!-- Consistent padding with post cards -->
                     <!-- Loading Indicator -->
                     <div id="loading-indicator" class="text-center py-4" style="display: none;">
                         <div class="mb-3">
@@ -39,70 +39,144 @@
                         </div>
                     </div>
 
+                    <!-- Progress Steps -->
+                    <div class="mb-4" id="form-steps">
+                        <ul class="nav nav-pills nav-justified" id="progressSteps">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-step="1">Title</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" data-step="2">Cover Image</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" data-step="3">Content</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" data-step="4">Review</a>
+                            </li>
+                        </ul>
+                    </div>
+
                     <!-- Form (initially visible) -->
-                    <form id="post-form" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" style="display: block;">
+                    <form id="post-form" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <!-- Title Field -->
-                        <div class="mb-4">
-                            <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" 
-                                   value="{{ old('title') }}" required>
-                            @error('title')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
+                        <!-- Step 1: Title -->
+                        <div class="step" id="step1">
+                            <div class="mb-4">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       value="{{ old('title') }}" required>
+                                @error('title')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-primary next-step" data-next="2">
+                                    Next Step >
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Cover Image Field -->
-                        <div class="mb-4">
-                            <label for="cover_image" class="form-label">Cover Image</label>
-                            <input type="file" class="form-control" id="cover_image" name="cover_image"
-                                   accept="image/*">
-                            @error('cover_image')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                            <div id="image-preview" class="mt-2"></div>
+                        <!-- Step 2: Cover Image -->
+                        <div class="step" id="step2" style="display: none;">
+                            <div class="mb-4">
+                                <label for="cover_image" class="form-label">Cover Image</label>
+                                <input type="file" class="form-control" id="cover_image" name="cover_image"
+                                       accept="image/*">
+                                @error('cover_image')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                                <div id="image-preview" class="mt-2"></div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary prev-step" data-prev="1">
+                                    < Back
+                                </button>
+                                <button type="button" class="btn btn-primary next-step" data-next="3">
+                                    Next Step >
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Status Field -->
-                        <div class="mb-4">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" id="status" name="status" required>
-                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
-                            </select>
-                            @error('status')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
+                        <!-- Step 3: Content -->
+                        <div class="step" id="step3" style="display: none;">
+                            <div class="mb-4">
+                                <label for="body" class="form-label">Content</label>
+                                <textarea class="form-control" id="body" name="body" rows="10">{{ old('body', '') }}</textarea>
+                                @error('body')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select class="form-control" id="status" name="status" required>
+                                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                        <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
+                                    </select>
+                                    @error('status')
+                                        <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6" id="publish-date-container" style="display: none;">
+                                    <label for="published_at" class="form-label">Publish Date</label>
+                                    <input type="datetime-local" class="form-control" id="published_at" name="published_at"
+                                           value="{{ old('published_at') }}">
+                                    @error('published_at')
+                                        <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary prev-step" data-prev="2">
+                                    < Back
+                                </button>
+                                <button type="button" class="btn btn-primary next-step" data-next="4">
+                                    Next Step >
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Publish Date Field -->
-                        <div class="mb-4" id="publish-date-container" style="display: none;">
-                            <label for="published_at" class="form-label">Publish Date</label>
-                            <input type="datetime-local" class="form-control" id="published_at" name="published_at"
-                                   value="{{ old('published_at') }}">
-                            @error('published_at')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <!-- Step 4: Review -->
+                        <div class="step" id="step4" style="display: none;">
+                            <div class="mb-4">
+                                <h5 class="mb-3">Review Your Post</h5>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6>Title</h6>
+                                        <p id="review-title"></p>
+                                        
+                                        <h6 class="mt-3">Cover Image</h6>
+                                        <div id="review-image" class="text-center">
+                                            <p class="text-muted">No image selected</p>
+                                        </div>
+                                        
+                                        <h6 class="mt-3">Content Preview</h6>
+                                        <div id="review-content" class="border p-2 rounded bg-light"></div>
+                                        
+                                        <h6 class="mt-3">Status</h6>
+                                        <p id="review-status"></p>
+                                        
+                                        <h6 class="mt-3">Publish Date</h6>
+                                        <p id="review-publish-date"></p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <!-- Content Field -->
-                        <div class="mb-4">
-                            <label for="body" class="form-label">Content</label>
-                            <textarea class="form-control" id="body" name="body" rows="10">{{ old('body', '') }}</textarea>
-                            @error('body')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Form Actions -->
-                        <div class="d-flex justify-content-end gap-3 border-top pt-4">
-                            <a href="{{ route('posts.user') }}" class="btn btn-outline-secondary">
-                                Cancel
-                            </a>
-                            <button type="submit" class="btn btn-primary" id="submit-btn">
-                                Create Post
-                            </button>
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary prev-step" data-prev="3">
+                                    < Back
+                                </button>
+                                <button type="submit" class="btn btn-success" id="submit-btn">
+                                    Publish Post
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -119,6 +193,45 @@
     
     #success-message {
         animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    /* Step navigation styling */
+   /* Step navigation styling */
+#progressSteps .nav-link {
+    position: relative;
+    color: var(--bs-secondary); /* Default color */
+    padding: 0.5rem 0;
+    font-weight: 500;
+    background-color: transparent; /* Remove default background */
+    border-radius: 0; /* Remove rounded corners */
+}
+
+#progressSteps .nav-link.active {
+    color: white !important; /* White text for active state */
+    background-color: var(--bs-primary) !important; /* Blue background */
+    font-weight: 600;
+    border-radius: 0.25rem; /* Slight rounding */
+}
+
+#progressSteps .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background-color: var(--bs-primary);
+    border-radius: 50%;
+}
+
+#progressSteps .nav-link.disabled {
+    color: var(--bs-secondary);
+    opacity: 0.6;
+}
+    /* Form step transitions */
+    .step {
+        transition: all 0.3s ease;
     }
     
     @keyframes fadeIn {
@@ -198,11 +311,74 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Handle step navigation
+    const steps = document.querySelectorAll('.step');
+    const progressLinks = document.querySelectorAll('#progressSteps .nav-link');
+    
+    document.querySelectorAll('.next-step').forEach(button => {
+        button.addEventListener('click', function() {
+            const nextStep = this.getAttribute('data-next');
+            showStep(nextStep);
+            updateProgress(nextStep);
+        });
+    });
+    
+    document.querySelectorAll('.prev-step').forEach(button => {
+        button.addEventListener('click', function() {
+            const prevStep = this.getAttribute('data-prev');
+            showStep(prevStep);
+            updateProgress(prevStep);
+        });
+    });
+    
+    function showStep(stepNumber) {
+        steps.forEach(step => step.style.display = 'none');
+        document.getElementById(`step${stepNumber}`).style.display = 'block';
+        
+        // If this is the review step, populate the review fields
+        if (stepNumber === '4') {
+            document.getElementById('review-title').textContent = document.getElementById('title').value;
+            
+            const coverImage = document.getElementById('cover_image').files[0];
+            const reviewImage = document.getElementById('review-image');
+            if (coverImage) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    reviewImage.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 200px;">`;
+                }
+                reader.readAsDataURL(coverImage);
+            }
+            
+            document.getElementById('review-content').innerHTML = document.getElementById('body').value;
+            document.getElementById('review-status').textContent = document.getElementById('status').value;
+            
+            const publishDate = document.getElementById('published_at').value;
+            document.getElementById('review-publish-date').textContent = publishDate ? 
+                new Date(publishDate).toLocaleString() : 'Not set';
+        }
+    }
+    
+    function updateProgress(currentStep) {
+        progressLinks.forEach(link => {
+            const step = link.getAttribute('data-step');
+            link.classList.remove('active', 'disabled');
+            
+            if (step === currentStep) {
+                link.classList.add('active');
+            } else if (step < currentStep) {
+                link.classList.add('disabled');
+            } else {
+                link.classList.add('disabled');
+            }
+        });
+    }
+
     // Form submission handler
     document.getElementById('post-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
         // Show loading indicator
+        document.getElementById('form-steps').style.display = 'none';
         document.getElementById('post-form').style.display = 'none';
         document.getElementById('loading-indicator').style.display = 'block';
         
@@ -233,4 +409,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
-@endsection
