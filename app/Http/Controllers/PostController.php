@@ -11,11 +11,12 @@ class PostController extends Controller
 {
     public function show(Post $post)
     {
-        return view('edit-post', [
-            'post' => $post,
-            'readOnly' => true,
-            'pageTitle' => $post->title
-        ]);
+        // Optional authorization check (uncomment if needed)
+        // if ($post->user_id !== auth()->id() && $post->status !== 'published') {
+        //     abort(403, 'Unauthorized action.');
+        // }
+        
+        return view('posts.show', compact('post'));
     }
 
     public function edit(Post $post)
@@ -143,8 +144,26 @@ class PostController extends Controller
 
     public function userPosts()
     {
-        $posts = auth()->user()->posts()->latest()->paginate(10);
-        return view('posts.user', [
+        // Start with the base query (only the user's posts)
+        $query = auth()->user()->posts()->latest();
+    
+        // Apply status filter if provided
+        if (request('status')) {
+            $query->where('status', request('status'));
+        }
+    
+        // Apply search filter if provided
+        if (request('search')) {
+            $query->where(function($q) {
+                $q->where('title', 'like', '%' . request('search') . '%')
+                  ->orWhere('body', 'like', '%' . request('search') . '%');
+            });
+        }
+    
+        // Paginate results
+        $posts = $query->paginate(10);
+    
+        return view('posts.user-posts', [
             'posts' => $posts,
             'pageTitle' => 'My Posts'
         ]);

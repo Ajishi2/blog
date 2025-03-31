@@ -19,20 +19,20 @@ Route::get('/register', function () {
 })->name('register')->middleware('guest');
 Route::post('/register', [UserController::class, 'register']);
 
-// Post routes - fixed ordering and definitions
-Route::prefix('posts')->middleware('auth')->group(function () {
-    // User posts listing - should come first
-    Route::get('/user', [PostController::class, 'userPosts'])->name('posts.user');
+// Post routes
+Route::prefix('posts')->group(function () {
+    // Routes that require authentication
+    Route::middleware('auth')->group(function () {
+        Route::get('/user', [PostController::class, 'userPosts'])->name('posts.user');
+        Route::get('/create', [PostController::class, 'create'])->name('posts.create');
+        Route::post('/store', [PostController::class, 'store'])->name('posts.store');
+        
+        Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+        Route::put('/{post}/update', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    });
     
-    // Create routes
-    Route::get('/create', [PostController::class, 'create'])->name('posts.create');
-    Route::post('/store', [PostController::class, 'store'])->name('posts.store');
-    
-    // View/Edit routes - keep these last
-    Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
-    Route::get('/user', [PostController::class, 'userPosts'])->name('posts.user');
-    Route::put('/{post}/update', [PostController::class, 'update'])->name('posts.update');
+    // Public route for viewing posts - no auth required
     Route::get('/{post}', [PostController::class, 'show'])->name('posts.show');
-    Route::delete('/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-
 });
+

@@ -362,12 +362,7 @@
                 <div class="d-flex align-items-center gap-3">
                     @auth
                         <!-- New Create Post Button -->
-                        <a href="{{ route('posts.create') }}" class="btn btn-primary d-flex align-items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="me-2">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                            </svg>
-                            New Post
-                        </a>
+                       
 
                         <!-- Profile Dropdown -->
                         <div class="dropdown">

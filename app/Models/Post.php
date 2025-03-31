@@ -18,7 +18,10 @@ class Post extends Model
         'cover_image',  // Make sure this is included
         'user_id'
     ];
-
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
     protected $dates = ['published_at'];
 
     // Default values for new posts

@@ -66,7 +66,7 @@
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h3 class="fs-5 fw-semibold mb-0">
-                                    <a href="#" class="text-decoration-none text-dark post-title-btn" data-bs-toggle="modal" data-bs-target="#postModal-{{ $post->id }}">
+                                    <a href="{{ route('posts.show', $post) }}" class="text-decoration-none text-dark post-title-btn">
                                         {{ $post->title }}
                                     </a>
                                 </h3>
@@ -98,7 +98,7 @@
                                         </svg>
                                         Edit
                                     </a>
-                                    <form action="{{ route('posts.delete', $post) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('posts.destroy', $post) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center" onclick="return confirm('Are you sure you want to delete this post?')">
@@ -108,42 +108,6 @@
                                             Delete
                                         </button>
                                     </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Post Modal -->
-                    <div class="modal fade" id="postModal-{{ $post->id }}" tabindex="-1" aria-labelledby="postModalLabel-{{ $post->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header border-0 pb-0">
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body pt-0">
-                                    @if(isset($post->cover_image) && $post->cover_image)
-                                        <div class="mb-4">
-                                            <img src="{{ asset('storage/' . $post->cover_image) }}" alt="{{ $post->title }}" class="img-fluid rounded-4 w-100" style="max-height: 400px; object-fit: cover;">
-                                        </div>
-                                    @endif
-                                    <h2 class="font-serif fs-2 fw-bold text-charcoal mb-3">{{ $post->title }}</h2>
-                                    <div class="d-flex gap-2 mb-4">
-                                        @if(isset($post->status))
-                                        <span class="badge {{ $post->status === 'published' ? 'badge-published' : 'badge-draft' }}">
-                                            {{ ucfirst($post->status) }}
-                                        </span>
-                                        @endif
-                                        <span class="badge badge-date">
-                                            {{ $post->created_at->format('M d, Y') }}
-                                        </span>
-                                    </div>
-                                    <div class="post-content">
-                                        {!! $post->body !!}
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-primary">Edit Post</a>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -289,22 +253,6 @@
         border-color: #dc3545;
         color: white;
     }
-    
-    .post-content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 0.5rem;
-        margin: 1rem 0;
-    }
-    
-    .modal-content {
-        border-radius: 1rem;
-        border: none;
-        overflow: hidden;
-    }
-    
-    .modal-header, .modal-footer {
-        border-color: var(--oceanic-gray-200);
-    }
 </style>
 @endpush
+
