@@ -5,8 +5,8 @@
 @section('content')
 <div class="container" style="padding-top: 100px;">
     <div class="row justify-content-center">
-        <div class="col-lg-10"> <!-- Changed from col-lg-8 to match user-posts -->
-            <div class="card mb-4 post-card"> <!-- Added post-card class -->
+        <div class="col-lg-10"> 
+            <div class="card mb-4 post-card"> 
                 <div class="card-header bg-white border-bottom-0 py-3 px-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{{ route('posts.user') }}" class="btn btn-sm btn-outline-secondary">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <div class="card-body p-4"> <!-- Consistent padding with post cards -->
+                <div class="card-body p-4"> 
                     <!-- Loading Indicator -->
                     <div id="loading-indicator" class="text-center py-4" style="display: none;">
                         <div class="mb-3">
@@ -195,22 +195,22 @@
         animation: fadeIn 0.5s ease-in-out;
     }
     
-    /* Step navigation styling */
+    
    /* Step navigation styling */
 #progressSteps .nav-link {
     position: relative;
-    color: var(--bs-secondary); /* Default color */
+    color: var(--bs-secondary);
     padding: 0.5rem 0;
     font-weight: 500;
-    background-color: transparent; /* Remove default background */
-    border-radius: 0; /* Remove rounded corners */
+    background-color: transparent; 
+    border-radius: 0; 
 }
 
 #progressSteps .nav-link.active {
-    color: white !important; /* White text for active state */
-    background-color: var(--bs-primary) !important; /* Blue background */
+    color: white !important; 
+    background-color: var(--bs-primary) !important; 
     font-weight: 600;
-    border-radius: 0.25rem; /* Slight rounding */
+    border-radius: 0.25rem; 
 }
 
 #progressSteps .nav-link.active::after {
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
         steps.forEach(step => step.style.display = 'none');
         document.getElementById(`step${stepNumber}`).style.display = 'block';
         
-        // If this is the review step, populate the review fields
+        
         if (stepNumber === '4') {
             document.getElementById('review-title').textContent = document.getElementById('title').value;
             
