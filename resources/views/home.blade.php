@@ -142,7 +142,6 @@
                     @enderror
                 </div>
                 
-                <!-- Add this username field -->
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" id="username" name="username" 
