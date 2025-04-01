@@ -265,10 +265,10 @@
                 '{{ asset("css/app.css") }}',
                 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
             ],
-            forced_root_block: '', // This prevents automatic <p> tags
-            entity_encoding: 'raw', // This prevents entity encoding
+            forced_root_block: '', 
+            entity_encoding: 'raw', 
             
-            // Handle cover image removal
+           
             setup: function(editor) {
                 editor.on('change', function() {
                     editor.save();
