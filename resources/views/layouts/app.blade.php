@@ -109,8 +109,8 @@
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
         }
         .navbar {
-    z-index: 1030; /* Bootstrap's default z-index for fixed elements */
-    position: relative; /* or 'fixed' if you want it to stay at top on scroll */
+    z-index: 1030; 
+    position: relative; 
 }
         .btn-secondary {
             background-color: var(--bs-secondary);
@@ -388,7 +388,7 @@
                 
                 <div class="d-flex align-items-center gap-3">
                     @auth
-                        <!-- New Create Post Button -->
+                       
                        
 
                         <!-- Profile Dropdown -->
